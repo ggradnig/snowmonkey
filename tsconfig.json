@@ -1,0 +1,17 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "packages/store/tsconfig.json"
+    },
+    {
+      "path": "packages/plugin-base/tsconfig.json"
+    },
+    {
+      "path": "packages/plugin-rxdb/tsconfig.json"
+    },
+    {
+      "path": "integration/tsconfig.json"
+    }
+  ]
+}
