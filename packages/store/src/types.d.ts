@@ -1,17 +1,26 @@
 import { Mutator } from "./mutator";
 import { Observable } from "rxjs";
+import { JSONSchema7 } from "json-schema";
 
 export interface Mutation {
   operation: string;
   data: object;
 }
 
-export interface Query {
+interface QueryImplementations {
   [syntax: string]: (...args: any) => any;
 }
 
+interface Query {
+  [name: string]: QueryImplementations;
+}
+
 export interface Queries {
-  [key: string]: Query;
+  [schema: string]: Query;
+}
+
+export interface Schemas {
+  [key: string]: JSONSchema7;
 }
 
 export interface Task {
@@ -37,6 +46,7 @@ export interface Mutations<S> {
 }
 
 export interface StoreConfig<S> {
+  schema?: Schemas;
   queries?: Queries;
   mutations?: Mutations<S>;
   reactions?: Reaction<S>[];
@@ -48,4 +58,12 @@ export interface Store {
   query(query: string, args?: object): Observable<any>;
 
   teardown(): Promise<void>;
+}
+
+export interface Syncable<R> {
+  sync(remote: R): Promise<void>;
+}
+
+export interface Servable<C> {
+  serve(config: C): Promise<void>;
 }

@@ -5,6 +5,7 @@
   ],
   "devDependencies": {
     "@types/jest": "^26.0.14",
+    "@types/json-schema": "^7.0.6",
     "@types/lodash": "^4.14.161",
     "eslint": "7.10.0",
     "express-pouchdb": "^4.2.0",

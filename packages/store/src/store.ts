@@ -26,7 +26,8 @@ export class Store<S> {
   }
 
   query(query: string, args?: object): Observable<any> {
-    const queryConfig = this.config.queries[query];
+    const [schema, queryName] = query.split(".");
+    const queryConfig = this.config.queries[schema][queryName];
     if (!queryConfig) {
       throw Error(`No query defined for '${query}'`);
     }
@@ -37,7 +38,7 @@ export class Store<S> {
       );
     }
     const preparedQuery = queryInSyntax(args);
-    return this.repository.find(preparedQuery);
+    return this.repository.find(preparedQuery, schema);
   }
 
   async teardown() {

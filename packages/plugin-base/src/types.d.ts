@@ -1,4 +1,5 @@
 import { Observable } from "rxjs";
+import {JSONSchema7} from "json-schema";
 
 export interface Change {}
 
@@ -24,11 +25,9 @@ export interface Document {
 export interface Repository<Q> {
   readonly syntax: string;
 
-  init(): Promise<void>;
-
   teardown(): Promise<void>;
 
-  find(query: Q): Observable<object[]>;
+  find(query: Q, schema: string): Observable<object[]>;
 
   insert(...documents: Document[]): Promise<void>;
 
@@ -37,4 +36,11 @@ export interface Repository<Q> {
   upsert(...documents: Document[]): Promise<void>;
 
   purge(object: Document): Promise<void>;
+}
+
+export type SchemaDefinition =  { [key: string]: JSONSchema7 };
+
+export interface RepositoryFactory<T> {
+  setSchema(schemas: SchemaDefinition);
+  create(): Promise<Repository<any> & T>;
 }

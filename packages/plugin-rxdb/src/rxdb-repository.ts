@@ -7,64 +7,44 @@ import {
   RxDatabase,
   RxDatabaseCreator,
   RxDocument,
+  RxJsonSchema,
   ServerOptions,
 } from "rxdb";
 import { groupBy } from "lodash";
 import { map } from "rxjs/operators";
-
-const customerSchema = {
-  title: "customer",
-  version: 0,
-  description: "describes a customer",
-  type: "object",
-  properties: {
-    customerId: {
-      type: "number",
-    },
-    name: {
-      type: "string",
-    },
-    confirmed: {
-      type: "boolean",
-    },
-  },
-};
+import { Servable, Syncable } from "@zinc/store";
 
 export class RxDBRepository
-  implements Repository<{ collection: string; query: MangoQueryNoLimit }> {
+  implements
+    Repository<MangoQueryNoLimit>,
+    Syncable<string>,
+    Servable<ServerOptions> {
   readonly syntax = "mango";
 
   private db: RxDatabase;
 
   constructor(
     private creator: RxDatabaseCreator,
-    private server?: ServerOptions,
-    private remotes?: string[]
+    private schemas: { [key: string]: RxJsonSchema }
   ) {}
 
   async init() {
     this.db = await createRxDatabase(this.creator);
-    const collection = await this.db.collection({
-      name: "customers",
-      schema: customerSchema,
-    });
-    if (this.server) {
-      await this.db.server(this.server);
-    }
-    if (this.remotes) {
-      collection.sync({
-        remote: this.remotes[0] + "/customers",
-        options: {
-          live: true,
-          retry: true,
-        },
+    for (let [key, schema] of Object.entries(this.schemas)) {
+      await this.db.collection({
+        name: key,
+        schema,
       });
     }
   }
 
-  find(query: { collection: string; query: object }): Observable<object[]> {
-    return this.db.collections[query.collection]
-      .find({ selector: query.query })
+  find(query: MangoQueryNoLimit, schema: string): Observable<object[]> {
+    if (!schema) {
+      throw new Error("RxDB does not support queries without a schema");
+    }
+
+    return this.db.collections[schema]
+      .find({ selector: query })
       .$.pipe(map((docs) => docs.map((doc) => doc.toJSON())));
   }
 
@@ -81,9 +61,7 @@ export class RxDBRepository
         // await (document.data as RxDocument).save();
       } else {
         // customers => document.destination
-        await self.db.collections['customers'].upsert(
-          document.data
-        );
+        await self.db.collections["customers"].upsert(document.data);
       }
     }
   }
@@ -121,5 +99,21 @@ export class RxDBRepository
 
   async teardown() {
     await this.db.destroy();
+  }
+
+  async serve(config: ServerOptions) {
+    await this.db.server(config);
+  }
+
+  async sync(remote: string) {
+    for (let [name, collection] of Object.entries(this.db.collections)) {
+      collection.sync({
+        remote: `${remote}/${name}`,
+        options: {
+          live: true,
+          retry: true,
+        },
+      });
+    }
   }
 }
