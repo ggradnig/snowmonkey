@@ -1,1 +1,2 @@
-export * from "./src/types";
+export * from './src/types.d';
+export * from './src/bootstrap';

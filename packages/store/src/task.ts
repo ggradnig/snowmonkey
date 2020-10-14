@@ -1,36 +1,29 @@
-import { Task } from "./types";
-import { Repository } from "@zinc/plugin-base";
-import { firstValueFrom } from "rxjs";
-import { Store } from "./store";
+import { Task } from './types';
+import { Repository } from '@zinc/plugin-base';
+import { firstValueFrom } from 'rxjs';
+import { Store } from './store';
 
-export class InsertTask implements Task {
-  constructor(
-    private repository: Repository<any>,
-    private destination: string,
-    private data: object[]
-  ) {}
+export class InsertTask<Q> implements Task {
+  constructor(private repository: Repository<Q>, private schema: string, private data: Record<string, unknown>[]) {}
 
-  async execute() {
-    await this.repository.insert(
-      ...this.data.map((data) => ({ data, destination: this.destination }))
-    );
+  async execute(): Promise<void> {
+    await this.repository.insert(this.schema, ...this.data);
   }
 }
 
-export class ReduceTask implements Task {
+export class ReduceTask<Q, S> implements Task {
   constructor(
-    private store: Store<any>,
-    private repository: Repository<any>,
+    private store: Store<Q, S>,
+    private repository: Repository<Q>,
     private query: string,
-    private data: any,
-    private reducer: (result) => any
+    private data: Record<string, unknown>,
+    private reducer: (result: Record<string, unknown>[]) => void,
+    private schema: string
   ) {}
 
-  async execute() {
-    const queryResult = await firstValueFrom(
-      this.store.query(this.query, this.data)
-    );
+  async execute(): Promise<void> {
+    const queryResult = await firstValueFrom(this.store.query(this.query, this.data));
     this.reducer(queryResult);
-    await this.repository.upsert(...queryResult.map(res => ({data: res})));
+    await this.repository.upsert(this.schema, ...queryResult);
   }
 }

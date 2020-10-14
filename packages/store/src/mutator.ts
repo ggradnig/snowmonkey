@@ -1,34 +1,31 @@
-import { SnapshotSlice, Task } from "./types";
-import { InsertTask, ReduceTask } from "./task";
-import { Store } from "./store";
-import { Repository } from "@zinc/plugin-base";
-import { Observer } from "rxjs";
+import { SnapshotSlice, StoreConfig, Task } from './types';
+import { InsertTask, ReduceTask } from './task';
+import { Store } from './store';
+import { Repository } from '@zinc/plugin-base';
+import { Observer } from 'rxjs';
 
-export class Mutator {
+export class Mutator<Q, S> {
   constructor(
-    private repository: Repository<any>,
-    private store: Store<any>,
-    private taskObserver: Observer<Task>
+    private repository: Repository<Q>,
+    private store: Store<Q, S>,
+    private taskObserver: Observer<Task>,
+    private storeConfig: StoreConfig<Q, S>
   ) {}
 
-  runTransaction(transaction: (mutator: Mutator) => Mutator) {
-    throw Error("Transactions are not implemented yet");
-  }
-
-  query(query: string, data: any): SnapshotSlice<any> {
+  query<T extends Record<string, unknown>[]>(query: string, data: Record<string, unknown>): SnapshotSlice<Q, T> {
     const self = this;
+    const [schema] = query.split('.');
     return {
-      reduce(reducer: (state: any) => any): Mutator {
-        self.taskObserver.next(
-          new ReduceTask(self.store, self.repository, query, data, reducer)
-        );
+      reduce(reducer: (state: T) => void): Mutator<Q, T> {
+        self.taskObserver.next(new ReduceTask(self.store, self.repository, query, data, reducer, schema));
         return this;
-      },
+      }
     };
   }
+  u;
 
-  insert(destination: string, ...data: object[]): Mutator {
-    this.taskObserver.next(new InsertTask(this.repository, destination, data));
+  insert(schema: string, ...data: Record<string, unknown>[]): Mutator<Q, S> {
+    this.taskObserver.next(new InsertTask(this.repository, schema, data));
     return this;
   }
 }

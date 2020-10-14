@@ -1,1 +1,1 @@
-export * from "./src/create-rxdb-repository";
+export * from './src/create-rxdb-repository';

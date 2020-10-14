@@ -1,52 +1,47 @@
-import { Repository } from "../../plugin-base";
-import { StoreConfig, Task } from "./types";
-import { combineLatest, defer, Observable, of, ReplaySubject } from "rxjs";
-import { Mutator } from "./mutator";
-import { concatMap, pairwise, switchMap, tap } from "rxjs/operators";
+import { Repository } from '../../plugin-base';
+import { StoreConfig, Task } from './types';
+import { combineLatest, defer, Observable, of, ReplaySubject } from 'rxjs';
+import { Mutator } from './mutator';
+import { concatMap, pairwise, switchMap } from 'rxjs/operators';
 
-export class Store<S> {
-  constructor(
-    private config: StoreConfig<S>,
-    private repository: Repository<any>
-  ) {
+export class Store<Q, S> {
+  constructor(private config: StoreConfig<Q, S>, private repository: Repository<Q>) {
     this.setupReactions();
   }
 
-  mutate(mutation: string, data: object) {
+  mutate(mutation: string, data: Record<string, unknown>): void {
     const mutationFn = this.config.mutations[mutation];
     if (!mutationFn) {
       throw Error(`No mutation defined for '${mutation}'`);
     }
 
     const taskSubject = new ReplaySubject<Task>();
-    const mutator = new Mutator(this.repository, this, taskSubject);
+    const mutator = new Mutator(this.repository, this, taskSubject, this.config);
 
     mutationFn(mutator, data);
     taskSubject.pipe(concatMap((task) => task.execute())).subscribe();
   }
 
-  query(query: string, args?: object): Observable<any> {
-    const [schema, queryName] = query.split(".");
+  query(query: string, data?: Record<string, unknown>): Observable<Record<string, unknown>[]> {
+    const [schema, queryName] = query.split('.');
     const queryConfig = this.config.queries[schema][queryName];
     if (!queryConfig) {
       throw Error(`No query defined for '${query}'`);
     }
     const queryInSyntax = queryConfig[this.repository.syntax];
     if (!queryConfig) {
-      throw Error(
-        `Query '${query}' not available in syntax ${this.repository.syntax}`
-      );
+      throw Error(`Query '${query}' not available in syntax ${this.repository.syntax}`);
     }
-    const preparedQuery = queryInSyntax(args);
+    const preparedQuery = queryInSyntax(data);
     return this.repository.find(preparedQuery, schema);
   }
 
-  async teardown() {
+  async teardown(): Promise<void> {
     await this.repository.teardown();
   }
 
   private setupReactions() {
-    for (let reaction of this.config.reactions || []) {
+    for (const reaction of this.config.reactions || []) {
       this.query(reaction.query)
         .pipe(
           pairwise(),
@@ -55,7 +50,7 @@ export class Store<S> {
             if (event && reaction.resolve) {
               return combineLatest({
                 response: defer(() => reaction.resolve(event)),
-                event: of(event),
+                event: of(event)
               });
             } else {
               return of({ event, response: void 0 });
@@ -63,14 +58,11 @@ export class Store<S> {
           })
         )
         .subscribe(({ event, response }) => {
-          if(!event) {
+          if (!event) {
             return;
           }
           const mutations = reaction.mutate(event, response);
-          (mutations instanceof Array
-            ? mutations
-            : [mutations]
-          ).forEach((mutation) =>
+          (mutations instanceof Array ? mutations : [mutations]).forEach((mutation) =>
             this.mutate(mutation.operation, mutation.data)
           );
         });

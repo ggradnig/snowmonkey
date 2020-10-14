@@ -1,25 +1,9 @@
-import { Observable } from "rxjs";
-import {JSONSchema7} from "json-schema";
-
-export interface Change {}
-
-export interface Upstream {
-  send(change: Change);
-}
-
-export interface Downstream {
-  receive$: Observable<Change>;
-}
-
-export interface Cache {
-  get(gql: string): Promise<object>;
-
-  set(gql: string, data: object): Promise<void>;
-}
+import { Observable } from 'rxjs';
+import { JSONSchema7 } from 'json-schema';
 
 export interface Document {
   destination: string;
-  data: object;
+  data: Record<string, unknown>;
 }
 
 export interface Repository<Q> {
@@ -27,20 +11,21 @@ export interface Repository<Q> {
 
   teardown(): Promise<void>;
 
-  find(query: Q, schema: string): Observable<object[]>;
+  find<T extends Record<string, unknown>>(query: Q, schema: string): Observable<T[]>;
 
-  insert(...documents: Document[]): Promise<void>;
+  insert(schema: string, ...records: Record<string, unknown>[]): Promise<void>;
 
-  update(...documents: Document[]): Promise<void>;
+  update(schema: string, ...records: Record<string, unknown>[]): Promise<void>;
 
-  upsert(...documents: Document[]): Promise<void>;
+  upsert(schema: string, ...records: Record<string, unknown>[]): Promise<void>;
 
   purge(object: Document): Promise<void>;
 }
 
-export type SchemaDefinition =  { [key: string]: JSONSchema7 };
+export type SchemaDefinition = { [key: string]: JSONSchema7 };
 
-export interface RepositoryFactory<T> {
+export interface RepositoryFactory<Q, T> {
   setSchema(schemas: SchemaDefinition);
-  create(): Promise<Repository<any> & T>;
+
+  create(): Promise<Repository<Q> & T>;
 }

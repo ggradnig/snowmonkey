@@ -7,11 +7,17 @@
     "@types/jest": "^26.0.14",
     "@types/json-schema": "^7.0.6",
     "@types/lodash": "^4.14.161",
-    "eslint": "7.10.0",
+    "@typescript-eslint/eslint-plugin": "^4.4.0",
+    "@typescript-eslint/parser": "^4.4.0",
+    "eslint": "^7.11.0",
     "express-pouchdb": "^4.2.0",
     "graphql-to-mongodb": "^1.6.5",
+    "husky": "^4.3.0",
+    "i": "^0.3.6",
     "jest": "^26.5.2",
+    "lint-staged": "^10.4.0",
     "lodash": "^4.17.20",
+    "npm": "^6.14.8",
     "pouchdb-adapter-http": "^7.2.2",
     "pouchdb-adapter-memory": "7.2.2",
     "prettier": "2.1.2",
@@ -22,6 +28,21 @@
     "why-is-node-running": "^2.2.0"
   },
   "scripts": {
-    "test": "jest integration/ --config integration/jest.config.js --forceExit"
-  }
+    "test": "jest integration/ --config integration/jest.config.js --forceExit",
+    "push": "npm run test",
+    "lint": "eslint **/*.ts"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged && npm run lint",
+      "pre-push": "npm run push"
+    }
+  },
+  "lint-staged": {
+    "{packages,integration}/**/*.{ts,json,md}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "dependencies": {}
 }

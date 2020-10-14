@@ -1,19 +1,19 @@
-import {Repository, RepositoryFactory} from "../../plugin-base";
-import { Servable, Store, StoreConfig, Syncable } from "./types";
-import { Store as StoreClass } from "./store";
+import { RepositoryFactory } from '../../plugin-base';
+import { Servable, Store, StoreConfig, Syncable } from './types';
+import { Store as StoreClass } from './store';
 
-export async function bootstrapStandalone<S, Q>(
-  storeConfig: StoreConfig<S>,
-  repositoryFactory: RepositoryFactory<any>
+export async function bootstrapStandalone<Q, S, R>(
+  storeConfig: StoreConfig<Q, S>,
+  repositoryFactory: RepositoryFactory<Q, R>
 ): Promise<Store> {
   repositoryFactory.setSchema(storeConfig.schema);
   const repository = await repositoryFactory.create();
   return new StoreClass(storeConfig, repository);
 }
 
-export async function bootstrapClient<S, R>(
-  storeConfig: StoreConfig<S>,
-  repositoryFactory: RepositoryFactory<Syncable<R>>,
+export async function bootstrapClient<Q, S, R>(
+  storeConfig: StoreConfig<Q, S>,
+  repositoryFactory: RepositoryFactory<Q, Syncable<R>>,
   ...remotes: R[]
 ): Promise<Store> {
   repositoryFactory.setSchema(storeConfig.schema);
@@ -22,9 +22,9 @@ export async function bootstrapClient<S, R>(
   return new StoreClass(storeConfig, repository);
 }
 
-export async function bootstrapServer<S, SC>(
-  storeConfig: StoreConfig<S>,
-  repositoryFactory: RepositoryFactory<Servable<SC>>,
+export async function bootstrapServer<Q, S, SC>(
+  storeConfig: StoreConfig<Q, S>,
+  repositoryFactory: RepositoryFactory<Q, Servable<SC>>,
   serverConfig: SC
 ): Promise<Store> {
   repositoryFactory.setSchema(storeConfig.schema);
