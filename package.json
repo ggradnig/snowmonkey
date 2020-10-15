@@ -32,7 +32,7 @@
     "test": "lerna run test",
 
     "push": "npm run test",
-    "lint": "eslint **/*.ts"
+    "lint": "eslint packages/*/src/**/*.ts"
   },
   "husky": {
     "hooks": {
