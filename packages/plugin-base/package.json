@@ -1,7 +1,7 @@
 {
   "name": "@snowmonkey/plugin-base",
   "description": "",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
   "files": [
