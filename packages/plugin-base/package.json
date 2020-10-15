@@ -1,7 +1,7 @@
 {
   "name": "@snowmonkey/plugin-base",
   "description": "",
-  "version": "0.0.2",
+  "version": "0.0.1",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
   "files": [
@@ -20,5 +20,6 @@
     "rxjs": "7.0.0-beta.7"
   },
   "keywords": [],
-  "author": ""
+  "author": "",
+  "gitHead": "b855fdf5b549c2b4f9276bd5adde61ab9edb8985"
 }
