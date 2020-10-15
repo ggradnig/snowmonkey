@@ -21,7 +21,10 @@
     "rxdb": "9.6.0",
     "rxjs": "7.0.0-beta.7"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "keywords": [],
   "author": "",
-  "gitHead": "b855fdf5b549c2b4f9276bd5adde61ab9edb8985"
+  "gitHead": "e31e17ca00856c36b5b19b490c033f146446a25d"
 }
