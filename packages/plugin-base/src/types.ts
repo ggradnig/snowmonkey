@@ -29,3 +29,11 @@ export interface RepositoryFactory<Q, T> {
 
   create(): Promise<Repository<Q> & T>;
 }
+
+export interface Syncable<R> {
+  sync(remote: R): Promise<void>;
+}
+
+export interface Servable<C> {
+  serve(config: C): Promise<void>;
+}

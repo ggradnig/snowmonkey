@@ -1,5 +1,5 @@
-import { bootstrapClient, bootstrapServer, Store } from '@zinc/store';
-import { createRxDBRepository } from '@zinc/plugin-rxdb';
+import { bootstrapClient, bootstrapServer, Store } from '@snowmonkey/store';
+import { createRxDBRepository } from '@snowmonkey/plugin-rxdb';
 import { addRxPlugin } from 'rxdb';
 import { differenceBy } from 'lodash';
 import { filter, first, map, timeout } from 'rxjs/operators';

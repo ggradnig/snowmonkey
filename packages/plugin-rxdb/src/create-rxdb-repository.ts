@@ -1,7 +1,7 @@
 import { RxDBRepository } from './rxdb-repository';
-import { RepositoryFactory, SchemaDefinition } from '@zinc/plugin-base';
+import { RepositoryFactory, SchemaDefinition } from '@snowmonkey/plugin-base';
 import { RxDatabaseCreator, RxJsonSchema, ServerOptions } from 'rxdb';
-import { Servable, Syncable } from '@zinc/store';
+import { Servable, Syncable } from '@snowmonkey/plugin-base';
 
 export function createRxDBRepository(
   config: RxDatabaseCreator

@@ -59,11 +59,3 @@ export interface Store {
 
   teardown(): Promise<void>;
 }
-
-export interface Syncable<R> {
-  sync(remote: R): Promise<void>;
-}
-
-export interface Servable<C> {
-  serve(config: C): Promise<void>;
-}

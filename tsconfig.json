@@ -1,17 +1,14 @@
 {
-  "files": [],
-  "references": [
-    {
-      "path": "packages/store/tsconfig.json"
+  "extends": "./tsconfig.build.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@snowmonkey/*": [
+        "packages/*/src"
+      ]
     },
-    {
-      "path": "packages/plugin-base/tsconfig.json"
-    },
-    {
-      "path": "packages/plugin-rxdb/tsconfig.json"
-    },
-    {
-      "path": "integration/tsconfig.json"
-    }
-  ]
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "types": []
+  }
 }

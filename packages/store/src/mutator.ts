@@ -1,7 +1,7 @@
 import { SnapshotSlice, StoreConfig, Task } from './types';
 import { InsertTask, ReduceTask } from './task';
 import { Store } from './store';
-import { Repository } from '@zinc/plugin-base';
+import { Repository } from '@snowmonkey/plugin-base';
 import { Observer } from 'rxjs';
 
 export class Mutator<Q, S> {

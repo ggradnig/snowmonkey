@@ -1,5 +1,5 @@
 import { Task } from './types';
-import { Repository } from '@zinc/plugin-base';
+import { Repository } from '@snowmonkey/plugin-base';
 import { firstValueFrom } from 'rxjs';
 import { Store } from './store';
 

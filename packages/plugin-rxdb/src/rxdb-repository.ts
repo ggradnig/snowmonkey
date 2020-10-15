@@ -1,4 +1,4 @@
-import { Repository } from '@zinc/plugin-base';
+import { Repository } from '@snowmonkey/plugin-base';
 import { Observable } from 'rxjs';
 import {
   createRxDatabase,
@@ -11,7 +11,7 @@ import {
   ServerOptions
 } from 'rxdb';
 import { map } from 'rxjs/operators';
-import { Servable, Syncable } from '@zinc/store';
+import { Servable, Syncable } from '@snowmonkey/plugin-base';
 
 export class RxDBRepository implements Repository<MangoQueryNoLimit>, Syncable<string>, Servable<ServerOptions> {
   readonly syntax = 'mango';

@@ -1,8 +1,8 @@
-import { Repository } from '../../plugin-base';
 import { StoreConfig, Task } from './types';
 import { combineLatest, defer, Observable, of, ReplaySubject } from 'rxjs';
 import { Mutator } from './mutator';
 import { concatMap, pairwise, switchMap } from 'rxjs/operators';
+import { Repository } from '@snowmonkey/plugin-base';
 
 export class Store<Q, S> {
   constructor(private config: StoreConfig<Q, S>, private repository: Repository<Q>) {

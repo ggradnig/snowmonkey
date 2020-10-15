@@ -1,6 +1,6 @@
-import { RepositoryFactory } from '../../plugin-base';
-import { Servable, Store, StoreConfig, Syncable } from './types';
+import { Store, StoreConfig } from './types';
 import { Store as StoreClass } from './store';
+import { RepositoryFactory, Syncable, Servable } from '@snowmonkey/plugin-base';
 
 export async function bootstrapStandalone<Q, S, R>(
   storeConfig: StoreConfig<Q, S>,
