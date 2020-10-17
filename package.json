@@ -34,7 +34,7 @@
     "pub": "lerna publish",
     "test": "lerna run test",
     "integration": "jest integration/ --config integration/jest.config.js --forceExit",
-    "push": "npm run test",
+    "push": "npm run integration",
     "lint": "eslint packages/*/src/**/*.ts"
   },
   "husky": {
