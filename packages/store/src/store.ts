@@ -4,8 +4,8 @@ import { Mutator } from './mutator';
 import { concatMap, pairwise, switchMap } from 'rxjs/operators';
 import { Repository } from '@snowmonkey/plugin-base';
 
-export class Store<Q, S> {
-  constructor(private config: StoreConfig<Q, S>, private repository: Repository<Q>) {
+export class Store<Q> {
+  constructor(private config: StoreConfig<Q>, private repository: Repository<Q>) {
     this.setupReactions();
   }
 

@@ -5,9 +5,14 @@
     "target": "es2015",
     "declaration": true,
     "sourceMap": true,
-    "noEmitOnError": true
+    "noEmitOnError": true,
+    "experimentalDecorators": true,
+    "lib": [
+      "es5",
+      "es6",
+      "es7"
+    ]
   },
-
   "exclude": [
     "node_modules",
     "dist"

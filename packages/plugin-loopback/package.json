@@ -1,0 +1,30 @@
+{
+  "name": "@snowmonkey/plugin-loopback",
+  "description": "",
+  "version": "0.0.3",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.es.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "npm run clean && npm run compile",
+    "clean": "rimraf -rf ./dist",
+    "compile": "tsc -p tsconfig.build.json",
+    "prepublishOnly": "yarn run build",
+    "test": "npm run build"
+  },
+  "types": "dist/index.d.ts",
+  "license": "MIT",
+  "dependencies": {
+    "@snowmonkey/plugin-base": "^0.0.3",
+    "rxdb": "9.6.0",
+    "rxjs": "7.0.0-beta.7"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [],
+  "author": "",
+  "gitHead": "e31e17ca00856c36b5b19b490c033f146446a25d"
+}

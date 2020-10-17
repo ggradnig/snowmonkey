@@ -28,7 +28,7 @@ export interface Task {
 }
 
 export type SnapshotSlice<Q, S extends Record<string, unknown>[]> = {
-  reduce(stateReducer: (state: S) => void): Mutator<Q, S>;
+  reduce(stateReducer: (state: S) => void): Mutator<Q>;
 };
 
 export interface Reaction<E extends Record<string, unknown> = Record<string, unknown>, R = unknown> {
@@ -41,14 +41,14 @@ export interface Reaction<E extends Record<string, unknown> = Record<string, unk
   mutate(E, R): Mutation | Mutation[];
 }
 
-export interface Mutations<Q, S> {
-  [key: string]: (snapshot: Mutator<Q, S>, data: Record<string, unknown>) => S;
+export interface Mutations<Q> {
+  [key: string]: <S>(snapshot: Mutator<Q>, data: Record<string, unknown>) => Mutator<Q>;
 }
 
-export interface StoreConfig<Q, S> {
+export interface StoreConfig<Q> {
   schema?: Schemas;
   queries?: Queries<Q>;
-  mutations?: Mutations<Q, S>;
+  mutations?: Mutations<Q>;
   reactions?: Reaction[];
 }
 

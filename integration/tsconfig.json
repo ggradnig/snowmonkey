@@ -1,7 +1,8 @@
 {
   "extends": "../tsconfig",
   "compilerOptions": {
-    "types": ["node", "jest"]
+    "types": ["node", "jest"],
+    "emitDecoratorMetadata": true
   },
   "include": ["src/**/*.test.ts"]
 }

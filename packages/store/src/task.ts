@@ -11,9 +11,9 @@ export class InsertTask<Q> implements Task {
   }
 }
 
-export class ReduceTask<Q, S> implements Task {
+export class ReduceTask<Q> implements Task {
   constructor(
-    private store: Store<Q, S>,
+    private store: Store<Q>,
     private repository: Repository<Q>,
     private query: string,
     private data: Record<string, unknown>,

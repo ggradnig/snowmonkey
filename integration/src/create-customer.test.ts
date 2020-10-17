@@ -1,50 +1,31 @@
 import { bootstrapClient, bootstrapServer, Store } from '@snowmonkey/store';
-import { createRxDBRepository } from '@snowmonkey/plugin-rxdb';
+import { createRxDBRepository, rxdbPopulator } from '@snowmonkey/plugin-rxdb';
 import { addRxPlugin } from 'rxdb';
 import { differenceBy } from 'lodash';
 import { filter, first, map, timeout } from 'rxjs/operators';
-import { firstValueFrom, identity } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import * as memoryAdapter from 'pouchdb-adapter-memory';
 import * as serverPlugin from 'rxdb/plugins/server';
 import * as httpAdapter from 'pouchdb-adapter-http';
+import { model, property } from '@loopback/repository';
+import { entityStoreConfig } from '@snowmonkey/entity';
+import { register } from '@snowmonkey/plugin-loopback';
 
 addRxPlugin(serverPlugin);
 addRxPlugin(memoryAdapter);
 addRxPlugin(httpAdapter);
 
-interface Customer {
+@model({ name: 'customers' })
+class Customer {
+  @property()
   customerId: number;
+
+  @property()
   name: string;
+
+  @property()
   confirmed: boolean;
 }
-
-const queries = {
-  customers: {
-    findById: {
-      /** TODO: identity could be default **/
-      mango: identity
-    },
-    findAll: {
-      mango: () => ({})
-    }
-  }
-};
-
-const schema = {
-  customers: {
-    properties: {
-      customerId: {
-        type: 'number'
-      },
-      name: {
-        type: 'string'
-      },
-      confirmed: {
-        type: 'boolean'
-      }
-    }
-  }
-} as const;
 
 describe('CreateCustomer Integration Test', () => {
   let clientStore: Store;
@@ -52,13 +33,7 @@ describe('CreateCustomer Integration Test', () => {
 
   beforeEach(async () => {
     clientStore = await bootstrapClient(
-      {
-        schema,
-        queries,
-        mutations: {
-          addCustomer: (snapshot, customer) => snapshot.insert('customers', customer)
-        }
-      },
+      await entityStoreConfig(register(Customer), rxdbPopulator()),
       createRxDBRepository({
         name: 'clientdb',
         adapter: 'memory'
@@ -67,9 +42,7 @@ describe('CreateCustomer Integration Test', () => {
     );
 
     serverStore = await bootstrapServer(
-      {
-        schema,
-        queries,
+      await entityStoreConfig(register(Customer), rxdbPopulator(), {
         mutations: {
           confirmCustomer: (mutator, { customerId, response }: { customerId: string; response: Customer }) =>
             mutator.query('customers.findById', { customerId }).reduce(([customer]) => {
@@ -87,7 +60,7 @@ describe('CreateCustomer Integration Test', () => {
             })
           }
         ]
-      },
+      }),
       createRxDBRepository({
         name: 'serverdb',
         adapter: 'memory'
@@ -104,7 +77,7 @@ describe('CreateCustomer Integration Test', () => {
   });
 
   it('should confirm a new customer on the server', async () => {
-    clientStore.mutate('addCustomer', {
+    clientStore.mutate('customers.insert', {
       customerId: 123,
       name: 'John Doe',
       confirmed: false

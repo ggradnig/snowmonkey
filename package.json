@@ -4,6 +4,9 @@
     "packages/*"
   ],
   "devDependencies": {
+    "@loopback/core": "2.11.0",
+    "@loopback/repository": "3.1.0",
+    "@loopback/repository-json-schema": "3.0.2",
     "@types/jest": "^26.0.14",
     "@types/json-schema": "^7.0.6",
     "@types/lodash": "^4.14.161",
@@ -30,7 +33,7 @@
     "build": "lerna run build",
     "pub": "lerna publish",
     "test": "lerna run test",
-
+    "integration": "jest integration/ --config integration/jest.config.js --forceExit",
     "push": "npm run test",
     "lint": "eslint packages/*/src/**/*.ts"
   },
@@ -45,6 +48,5 @@
       "prettier --write",
       "git add"
     ]
-  },
-  "dependencies": {}
+  }
 }
